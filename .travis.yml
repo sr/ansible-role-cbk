@@ -2,7 +2,8 @@
 language: python
 python: "2.7"
 env:
-  - PLAYBOOK=test/playbook.yml
+  - PLAYBOOK=tests/playbook.yml
+  - INVENTORY=tests/inventory
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y curl
@@ -10,10 +11,10 @@ install:
   - pip install ansible
   - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
 script:
-  - "ansible-playbook -i test/inventory $PLAYBOOK --syntax-check"
-  - "ansible-playbook -i test/inventory $PLAYBOOK --connection=local --sudo"
+  - "ansible-playbook -i $INVENTORY $PLAYBOOK --syntax-check"
+  - "ansible-playbook -i $INVENTORY $PLAYBOOK --connection=local --sudo"
   - >
-    ansible-playbook -i test/inventory $PLAYBOOK --connection=local --sudo
+    ansible-playbook -i $INVENTORY $PLAYBOOK --connection=local --sudo
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
